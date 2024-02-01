@@ -1,0 +1,6 @@
+@kalkulator.net_HostAddress = http://localhost:5002
+
+GET {{kalkulator.net_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
