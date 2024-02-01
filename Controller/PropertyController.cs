@@ -1,4 +1,6 @@
+using AutoMapper;
 using kalkulator.net.Model;
+using kalkulator.net.Model.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,22 +8,25 @@ namespace kalkulator.net.Controller;
 
 [Route("api/[controller]")]
 [ApiController]
-public class PropertyController(AppDbContext context) : ControllerBase
+public class PropertyController(AppDbContext context, IMapper mapper) : ControllerBase
 {
     private readonly AppDbContext _context = context;
+    private readonly IMapper _mapper = mapper;
 
     // GET: api/Property
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Property>>> GetProperties()
+    public async Task<ActionResult<IEnumerable<PropertyDto>>> GetProperties()
     {
-        return await _context.Properties
+        var properties = await _context.Properties
             .Include(p => p.Calculations)
             .ToListAsync();
+
+        return _mapper.Map<List<PropertyDto>>(properties);
     }
 
     // GET: api/Property/5
     [HttpGet("{id}")]
-    public async Task<ActionResult<Property>> GetProperty(int id)
+    public async Task<ActionResult<PropertyDto>> GetProperty(int id)
     {
         var property = await _context.Properties.FindAsync(id);
 
@@ -30,28 +35,30 @@ public class PropertyController(AppDbContext context) : ControllerBase
             return NotFound();
         }
 
-        return property;
+        return _mapper.Map<PropertyDto>(property);
     }
 
     // POST: api/Property
     [HttpPost]
-    public async Task<ActionResult<Property>> PostProperty(Property property)
+    public async Task<ActionResult<PropertyDto>> PostProperty(PropertyDto propertyDto)
     {
+        var property = _mapper.Map<Property>(propertyDto);
         _context.Properties.Add(property);
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction(nameof(GetProperty), new { id = property.Id }, property);
+        return Created();
     }
 
     // PUT: api/Property/5
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutProperty(int id, Property property)
+    public async Task<IActionResult> PutProperty(int id, PropertyDto propertyDto)
     {
-        if (id != property.Id)
+        if (id != propertyDto.Id)
         {
             return BadRequest();
         }
 
+        var property = _mapper.Map<Property>(propertyDto);
         _context.Entry(property).State = EntityState.Modified;
 
         try

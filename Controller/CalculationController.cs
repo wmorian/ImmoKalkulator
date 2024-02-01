@@ -1,4 +1,6 @@
+using AutoMapper;
 using kalkulator.net.Model;
+using kalkulator.net.Model.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,15 +9,16 @@ namespace kalkulator.net.Controller;
 
 [Route("api/[controller]")]
 [ApiController]
-public class CalculationController(AppDbContext context) : ControllerBase
+public class CalculationController(AppDbContext context, IMapper mapper) : ControllerBase
 {
     private readonly AppDbContext _context = context;
+    private readonly IMapper _mapper = mapper;
 
     // GET: api/Calculation
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Calculation>>> GetCalculations()
+    public async Task<ActionResult<IEnumerable<CalculationDto>>> GetCalculations()
     {
-        return await _context.Calculations
+        var calculations = await _context.Calculations
             .Include(c => c.Property)
             .Include(c => c.PurchaseDetail)
             .Include(c => c.InitialInvestments)
@@ -27,11 +30,13 @@ public class CalculationController(AppDbContext context) : ControllerBase
                 .ThenInclude(o => o!.OtherCosts)
             .Include(c => c.Loans)
             .ToListAsync();
+
+        return _mapper.Map<List<CalculationDto>>(calculations);
     }
 
     // GET: api/Calculation/5
     [HttpGet("{id}")]
-    public async Task<ActionResult<Calculation>> GetCalculation(int id)
+    public async Task<ActionResult<CalculationDto>> GetCalculation(int id)
     {
         var calculation = await _context.Calculations
             .Include(c => c.Property)
@@ -51,36 +56,39 @@ public class CalculationController(AppDbContext context) : ControllerBase
             return NotFound();
         }
 
-        return calculation;
+        return _mapper.Map<CalculationDto>(calculation);
     }
 
     // POST: api/Calculation
     [HttpPost]
-    public async Task<ActionResult<Calculation>> PostCalculation(Calculation calculation)
+    public async Task<ActionResult<CalculationDto>> PostCalculation(CalculationDto calculationDto)
     {
         // Check if the PropertyId in the calculation exists in the database
-        var propertyExists = await _context.Properties.AnyAsync(p => p.Id == calculation.PropertyId);
+        var propertyExists = await _context.Properties.AnyAsync(p => p.Id == calculationDto.PropertyId);
         if (!propertyExists)
         {
-            return NotFound($"No property found with ID {calculation.PropertyId}");
+            return NotFound($"No property found with ID {calculationDto.PropertyId}");
         }
+
+        var calculation = _mapper.Map<Calculation>(calculationDto);
 
         _context.Calculations.Add(calculation);
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction(nameof(GetCalculation), new { id = calculation.Id }, calculation);
+        return Created();
     }
 
 
     // PUT: api/Calculation/5
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutCalculation(int id, Calculation calculation)
+    public async Task<IActionResult> PutCalculation(int id, CalculationDto calculationDto)
     {
-        if (id != calculation.Id)
+        if (id != calculationDto.Id)
         {
             return BadRequest();
         }
 
+        var calculation = _mapper.Map<Calculation>(calculationDto);
         _context.Entry(calculation).State = EntityState.Modified;
 
         try
