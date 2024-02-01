@@ -11,6 +11,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddControllers();
     
+// Register AutoMapper
+builder.Services.AddAutoMapper(typeof(Program).Assembly); // Adjust the assembly as necessary
 
 var app = builder.Build();
 
@@ -29,5 +31,7 @@ using (var scope = app.Services.CreateScope())
     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     dbContext.Database.EnsureCreated();
 }
+
+app.MapControllers();
 
 app.Run();
