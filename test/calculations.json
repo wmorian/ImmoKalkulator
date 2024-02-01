@@ -1,0 +1,47 @@
+{
+    "PropertyId": 1,
+    "PurchaseDetail": {
+        "PurchasePrice": 350000.00,
+        "BrokerCommission": 8750.00,
+        "NotaryFee": 1750.00,
+        "LandRegistryFee": 500.00,
+        "RealEstateTransferTax": 10500.00,
+        "OtherCosts": 2500.00
+    },
+    "InitialInvestments": [],
+    "Rent": {
+        "ColdRentPerSquareMeter": 9.50,
+        "TotalColdRent": 950.00,
+        "ParkingSpaces": 2,
+        "Other": 50.00
+    },
+    "Depreciation": {
+        "DepreciationRate": 2.5,
+        "BuildingValuePercentageOfPurchasePrice": 80.0
+    },
+    "Reserves": {
+        "CalculatedRentLoss": 1200.00,
+        "MaintenanceReservePerSquareMeterPerAnnum": 1.20
+    },
+    "Forecast": {
+        "AnnualCostIncrease": 2.0,
+        "AnnualRentIncrease": 1.5,
+        "AnnualValueIncrease": 3.0
+    },
+    "OperatingCosts": {
+        "HousingAllowanceAllocable": 150.00,
+        "PropertyTax": 300.00,
+        "HousingAllowanceNonAllocable": 100.00,
+        "HomeownersAssociationReserve": 200.00,
+        "OtherCosts": []
+    },
+    "Loans": [
+        {
+            "LoanAmount": 250000.00,
+            "InterestRate": 1.75,
+            "InitialRepaymentRate": 2.00,
+            "MonthlyPayment": 1250.00,
+            "YearOfFullRepayment": 2045
+        }
+    ]
+}
