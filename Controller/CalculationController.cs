@@ -203,11 +203,11 @@ public class CalculationController(AppDbContext context, IMapper mapper) : Contr
             newCalculation.PurchaseDetail = new PurchaseDetail
             {
                 PurchasePrice = calculation.PurchaseDetail.PurchasePrice,
-                BrokerCommission = calculation.PurchaseDetail.BrokerCommission,
-                NotaryFee = calculation.PurchaseDetail.NotaryFee,
-                LandRegistryFee = calculation.PurchaseDetail.LandRegistryFee,
-                RealEstateTransferTax = calculation.PurchaseDetail.RealEstateTransferTax,
-                OtherCosts = calculation.PurchaseDetail.OtherCosts
+                BrokerCommissionPercentage = calculation.PurchaseDetail.BrokerCommissionPercentage,
+                NotaryFeePercentage = calculation.PurchaseDetail.NotaryFeePercentage,
+                LandRegistryFeePercentage = calculation.PurchaseDetail.LandRegistryFeePercentage,
+                TransferTaxPercentage = calculation.PurchaseDetail.TransferTaxPercentage,
+                OtherCostsPercentage = calculation.PurchaseDetail.OtherCostsPercentage
             };
         }
 
@@ -222,11 +222,11 @@ public class CalculationController(AppDbContext context, IMapper mapper) : Contr
 
         if (calculation.Forecast != null)
         {
-            newCalculation.Forecast = new Forecast
+            newCalculation.Forecast = new AnnualForecast
             {
-                AnnualCostIncrease = calculation.Forecast.AnnualCostIncrease,
-                AnnualRentIncrease = calculation.Forecast.AnnualRentIncrease,
-                AnnualValueIncrease = calculation.Forecast.AnnualValueIncrease
+                CostIncreasePercentage = calculation.Forecast.CostIncreasePercentage,
+                RentIncreasePercentage = calculation.Forecast.RentIncreasePercentage,
+                ValueIncreasePercentage = calculation.Forecast.ValueIncreasePercentage
             };
         }
 
@@ -245,7 +245,7 @@ public class CalculationController(AppDbContext context, IMapper mapper) : Contr
         {
             newCalculation.Reserves = new Reserves
             {
-                CalculatedRentLoss = calculation.Reserves.CalculatedRentLoss,
+                CalculatedRentLossPercentage = calculation.Reserves.CalculatedRentLossPercentage,
                 MaintenanceReservePerSquareMeterPerAnnum = calculation.Reserves.MaintenanceReservePerSquareMeterPerAnnum
             };
         }

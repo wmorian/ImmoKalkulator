@@ -8,7 +8,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Property> Properties { get; set; }
     public DbSet<Calculation> Calculations { get; set; }
     public DbSet<Depreciation> Depreciations { get; set; }
-    public DbSet<Forecast> Forecasts { get; set; }
+    public DbSet<AnnualForecast> Forecasts { get; set; }
     public DbSet<InitialInvestment> InitialInvestments { get; set; }
     public DbSet<Loan> Loans { get; set; }
     public DbSet<OperatingCosts> OperatingCosts { get; set; }
@@ -58,7 +58,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         modelBuilder.Entity<Calculation>()
             .HasOne(c => c.Forecast)
             .WithOne(f => f.Calculation)
-            .HasForeignKey<Forecast>(f => f.CalculationId);
+            .HasForeignKey<AnnualForecast>(f => f.CalculationId);
 
         // One-to-one relationship between Calculation and OperatingCosts
         modelBuilder.Entity<Calculation>()

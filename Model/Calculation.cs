@@ -22,7 +22,7 @@ public class Calculation
     public Reserves? Reserves { get; set; }
 
     // Navigation property for Forecast
-    public Forecast? Forecast { get; set; }
+    public AnnualForecast? Forecast { get; set; }
 
     // Navigation property for OperatingCosts
     public OperatingCosts? OperatingCosts { get; set; }

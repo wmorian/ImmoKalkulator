@@ -13,7 +13,7 @@ public class MappingProfile : Profile
         CreateMap<Property, PropertyDto>().ReverseMap();
         CreateMap<Calculation, CalculationDto>().ReverseMap();
         CreateMap<Depreciation, DepreciationDto>().ReverseMap();
-        CreateMap<Forecast, ForecastDto>().ReverseMap();
+        CreateMap<AnnualForecast, AnnualForecastDto>().ReverseMap();
         CreateMap<InitialInvestment, InitialInvestmentDto>().ReverseMap();
         CreateMap<Loan, LoanDto>().ReverseMap();
         CreateMap<OperatingCosts, OperatingCostsDto>().ReverseMap();

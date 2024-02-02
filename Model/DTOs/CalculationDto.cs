@@ -9,7 +9,7 @@ public class CalculationDto
     public RentDto? Rent { get; set; }
     public DepreciationDto? Depreciation { get; set; }
     public ReservesDto? Reserves { get; set; }
-    public ForecastDto? Forecast { get; set; }
+    public AnnualForecastDto? Forecast { get; set; }
     public OperatingCostsDto? OperatingCosts { get; set; }
     public ICollection<LoanDto> Loans { get; set; } = [];
 }
