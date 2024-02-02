@@ -3,11 +3,11 @@ namespace kalkulator.net.Model.DTOs;
 public class PropertyDto
 {
     public int Id { get; set; }
-    public string? Street { get; set; } // "Strasse" in German
-    public string? City { get; set; } // "City" in German
-    public string? PostalCode { get; set; } // "PLZ" in German
-    public DateTime PurchaseDate { get; set; } // "Kaufdatum" in German
-    public string? Abbreviation { get; set; } // "Kürzel" in German
-    public double LivingSpace { get; set; } // "Wohnfläche" in German
-    public int ParkingSpaces { get; set; } // "Stellplätze" in German
+    public string? Street { get; set; } // "Strasse"
+    public string? City { get; set; } // "City"
+    public string? PostalCode { get; set; } // "PLZ"
+    public DateTime PurchaseDate { get; set; } // "Kaufdatum"
+    public string? Abbreviation { get; set; } // "Kürzel"
+    public double LivingSpace { get; set; } // "Wohnfläche"
+    public int ParkingSpaces { get; set; } // "Stellplätze"
 }

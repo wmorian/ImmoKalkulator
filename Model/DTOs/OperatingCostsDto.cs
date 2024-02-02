@@ -2,10 +2,10 @@ namespace kalkulator.net.Model.DTOs;
 
 public class OperatingCostsDto
 {
-    public decimal HousingAllowanceAllocable { get; set; } // "Hausgeld (umlagefähiger Teil)" in German
-    public decimal PropertyTax { get; set; } // "Grundsteuer" in German
-    public decimal HousingAllowanceNonAllocable { get; set; } // "Hausgeld (nicht umlagefähiger Teil)" in German
-    public decimal HomeownersAssociationReserve { get; set; } // "WEG Rücklage" in German
+    public decimal HousingAllowanceAllocable { get; set; } // "Hausgeld (umlagefähiger Teil)"
+    public decimal PropertyTax { get; set; } // "Grundsteuer"
+    public decimal HousingAllowanceNonAllocable { get; set; } // "Hausgeld (nicht umlagefähiger Teil)"
+    public decimal HomeownersAssociationReserve { get; set; } // "WEG Rücklage"
     public ICollection<OtherOperatingCost> OtherCosts { get; set; } = [];
 }
 

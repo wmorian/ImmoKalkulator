@@ -13,6 +13,6 @@ public class InitialInvestment
 
 public enum TaxTreatment
 {
-    Capitalize, // "Aktivieren" in German
-    ExpenseImmediately // "Sofort" in German
+    Capitalize, // "Aktivieren"
+    ExpenseImmediately // "Sofort"
 }
