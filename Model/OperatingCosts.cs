@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 namespace kalkulator.net.Model;
 
+// Bewirtschaftungskosten
 public class OperatingCosts
 {
     public int Id { get; set; } // Primary key

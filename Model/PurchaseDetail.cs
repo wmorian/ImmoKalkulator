@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 namespace kalkulator.net.Model;
 
+// Kaufpreis und Kaufnebenkosten
 public class PurchaseDetail
 {
     public int Id { get; set; } // Primary key

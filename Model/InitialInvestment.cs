@@ -1,5 +1,6 @@
 namespace kalkulator.net.Model;
 
+// Anfängliche Investitionen
 public class InitialInvestment
 {
     public int Id { get; set; } // Primary key

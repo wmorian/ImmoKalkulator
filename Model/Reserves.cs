@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 namespace kalkulator.net.Model;
 
+// Rücklagen
 public class Reserves
 {
     public int Id { get; set; } // Primary key
