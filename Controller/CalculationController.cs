@@ -147,9 +147,144 @@ public class CalculationController(AppDbContext context, IMapper mapper) : Contr
         return NoContent();
     }
 
+    // POST: api/Calculation/duplicate/{calculationId}
+    [HttpPost("duplicate/{calculationId}")]
+    public async Task<ActionResult<CalculationDto>> DuplicateCalculation(int calculationId)
+    {
+        // Fetch the calculation to be duplicated including all related entities
+        var calculationToDuplicate = await _context.Calculations
+            .Where(c => c.Id == calculationId)
+            .Include(c => c.PurchaseDetail)
+            .Include(c => c.InitialInvestments)
+            .Include(c => c.Rent)
+            .Include(c => c.Depreciation)
+            .Include(c => c.Reserves)
+            .Include(c => c.Forecast)
+            .Include(c => c.OperatingCosts)
+                .ThenInclude(o => o!.OtherCosts)
+            .Include(c => c.Loans)
+            .AsNoTracking() // Important to avoid tracking errors
+            .FirstOrDefaultAsync();
+
+        if (calculationToDuplicate == null)
+        {
+            return NotFound($"Calculation with ID {calculationId} not found.");
+        }
+
+        // Perform the duplication
+        var duplicatedCalculation = DuplicateCalculationEntity(calculationToDuplicate);
+
+        // Add the duplicated calculation to the context and save changes
+        _context.Calculations.Add(duplicatedCalculation);
+        await _context.SaveChangesAsync();
+
+        // Map the duplicated calculation to its DTO
+        var duplicatedCalculationDto = _mapper.Map<CalculationDto>(duplicatedCalculation);
+
+        // Return the duplicated calculation
+        return Ok(duplicatedCalculationDto);
+    }
+
+
     private bool CalculationExists(int id)
     {
         return _context.Calculations.Any(e => e.Id == id);
     }
 
+    private Calculation DuplicateCalculationEntity(Calculation calculation)
+    {
+        var newCalculation = new Calculation
+        {
+            PropertyId = calculation.PropertyId,
+        };
+
+        if (calculation.PurchaseDetail != null)
+        {
+            newCalculation.PurchaseDetail = new PurchaseDetail
+            {
+                PurchasePrice = calculation.PurchaseDetail.PurchasePrice,
+                BrokerCommission = calculation.PurchaseDetail.BrokerCommission,
+                NotaryFee = calculation.PurchaseDetail.NotaryFee,
+                LandRegistryFee = calculation.PurchaseDetail.LandRegistryFee,
+                RealEstateTransferTax = calculation.PurchaseDetail.RealEstateTransferTax,
+                OtherCosts = calculation.PurchaseDetail.OtherCosts
+            };
+        }
+
+        if (calculation.Depreciation != null)
+        {
+            newCalculation.Depreciation = new Depreciation
+            {
+                DepreciationRate = calculation.Depreciation.DepreciationRate,
+                BuildingValuePercentageOfPurchasePrice = calculation.Depreciation.BuildingValuePercentageOfPurchasePrice,
+            };
+        }
+
+        if (calculation.Forecast != null)
+        {
+            newCalculation.Forecast = new Forecast
+            {
+                AnnualCostIncrease = calculation.Forecast.AnnualCostIncrease,
+                AnnualRentIncrease = calculation.Forecast.AnnualRentIncrease,
+                AnnualValueIncrease = calculation.Forecast.AnnualValueIncrease
+            };
+        }
+
+        if (calculation.Rent != null)
+        {
+            newCalculation.Rent = new Rent
+            {
+                ColdRentPerSquareMeter = calculation.Rent.ColdRentPerSquareMeter,
+                TotalColdRent = calculation.Rent.TotalColdRent,
+                ParkingSpaces = calculation.Rent.ParkingSpaces,
+                Other = calculation.Rent.Other
+            };
+        }
+
+        if (calculation.Reserves != null)
+        {
+            newCalculation.Reserves = new Reserves
+            {
+                CalculatedRentLoss = calculation.Reserves.CalculatedRentLoss,
+                MaintenanceReservePerSquareMeterPerAnnum = calculation.Reserves.MaintenanceReservePerSquareMeterPerAnnum
+            };
+        }
+
+        if (calculation.OperatingCosts != null)
+        {
+            newCalculation.OperatingCosts = new OperatingCosts
+            {
+                HousingAllowanceAllocable = calculation.OperatingCosts.HousingAllowanceAllocable,
+                PropertyTax = calculation.OperatingCosts.PropertyTax,
+                HousingAllowanceNonAllocable = calculation.OperatingCosts.HousingAllowanceNonAllocable,
+                HomeownersAssociationReserve = calculation.OperatingCosts.HomeownersAssociationReserve,
+                OtherCosts = calculation.OperatingCosts.OtherCosts.Select(oc => new OtherOperatingCost
+                {
+                    Name = oc.Name,
+                    Cost = oc.Cost,
+                    IsAllocable = oc.IsAllocable
+                }).ToList()
+            };
+        }
+
+        newCalculation.InitialInvestments = calculation.InitialInvestments
+            .Select(inv => new InitialInvestment
+            {
+                Name = inv.Name,
+                Cost = inv.Cost,
+                TaxTreatment = inv.TaxTreatment,
+                ValueIncrease = inv.ValueIncrease
+            }).ToList();
+
+        newCalculation.Loans = calculation.Loans.Select(loan => new Loan
+        {
+            LoanAmount = loan.LoanAmount,
+            InterestRate = loan.InterestRate,
+            InitialRepaymentRate = loan.InitialRepaymentRate,
+            MonthlyPayment = loan.MonthlyPayment,
+            YearOfFullRepayment = loan.YearOfFullRepayment
+        }).ToList();
+
+        return newCalculation;
+    }
 }
