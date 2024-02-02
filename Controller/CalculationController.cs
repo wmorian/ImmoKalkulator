@@ -14,6 +14,27 @@ public class CalculationController(AppDbContext context, IMapper mapper) : Contr
     private readonly AppDbContext _context = context;
     private readonly IMapper _mapper = mapper;
 
+    // GET: api/Calculation/propertyid
+    [HttpGet("{propertyId}")]
+    public async Task<ActionResult<IEnumerable<CalculationDto>>> GetCalculations(int propertyId)
+    {
+        var calculations = await _context.Calculations
+            .Where(c => c.PropertyId == propertyId)
+            .Include(c => c.Property)
+            .Include(c => c.PurchaseDetail)
+            .Include(c => c.InitialInvestments)
+            .Include(c => c.Rent)
+            .Include(c => c.Depreciation)
+            .Include(c => c.Reserves)
+            .Include(c => c.Forecast)
+            .Include(c => c.OperatingCosts)
+                .ThenInclude(o => o!.OtherCosts)
+            .Include(c => c.Loans)
+            .ToListAsync();
+
+        return _mapper.Map<List<CalculationDto>>(calculations);
+    }
+
     // GET: api/Calculation
     [HttpGet]
     public async Task<ActionResult<IEnumerable<CalculationDto>>> GetCalculations()
@@ -35,7 +56,7 @@ public class CalculationController(AppDbContext context, IMapper mapper) : Contr
     }
 
     // GET: api/Calculation/5
-    [HttpGet("{id}")]
+    [HttpGet("single/{id}")]
     public async Task<ActionResult<CalculationDto>> GetCalculation(int id)
     {
         var calculation = await _context.Calculations
