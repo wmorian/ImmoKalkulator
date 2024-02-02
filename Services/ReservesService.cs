@@ -34,7 +34,6 @@ public class ReservesCalcs
         eine solide Gesamtrücklage gemäß der sog. Petersschen Formel. 
         Voraussetzung: Der Gebäudeanteil am Kaufpreis wurde mit der 
         entspr. Vorlage vom Finanzministerium ermittelt.  
-        =((H20*D14)*(1/80*1,5)-(12*K25))/C11
     */
     public double RecommendedMaintanceReserves { get; set; }
 }
