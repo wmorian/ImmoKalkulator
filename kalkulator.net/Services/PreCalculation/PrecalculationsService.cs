@@ -1,6 +1,6 @@
 using kalkulator.net.Model;
 
-namespace kalkulator.net.Services.PreCalculations;
+namespace kalkulator.net.Services.Precalculation;
 
 public class PrecalculationsService(Calculation calculation, double livingSpace)
 {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using kalkulator.net.Model;
 
-namespace kalkulator.net.Services;
+namespace kalkulator.net.Services.Precalculation;
 
 // Anfängliche Investitionen
 

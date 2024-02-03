@@ -1,4 +1,4 @@
-namespace kalkulator.net.Services;
+namespace kalkulator.net.Services.Precalculation;
 
 public class LoanCalcs
 {
