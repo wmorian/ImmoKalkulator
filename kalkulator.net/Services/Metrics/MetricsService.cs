@@ -58,7 +58,7 @@ public class MetricsService(Calculation calculation, double livingSpace)
         };
         double operatingCashflow = warmRent + operatingCosts + interest + repayment;
 
-        return new Cashflow 
+        return new Cashflow
         {
             WarmRent = warmRent,
             OperatingCosts = operatingCosts,
@@ -67,6 +67,29 @@ public class MetricsService(Calculation calculation, double livingSpace)
             OperatingCashflow = operatingCashflow,
             Tax = tax,
             NetCashflow = operatingCashflow - tax.TaxesToPay
+        };
+    }
+
+    public FinalYield GetFinalYield(int year, double personalTaxRate)
+    {
+        var forecast = calculation.Forecast ?? throw new Exception($"{nameof(calculation.Forecast)} cannot be null!");
+        var initialInvestmentCalcs = _precalculationsService.GetInitialInvestmentCalcs();
+
+        var loanCalcs = _precalculationsService.GetLoanCalcs();
+        var casflow = GetCashflow(personalTaxRate);
+        double valueIncreaseFirstYear = forecast.ValueIncreasePercentage / 100 * initialInvestmentCalcs.NewPropertyValue;
+        double assetGrowthWithoutAppreciation = 12 * (-casflow.Repayment + casflow.NetCashflow);
+        double assetGrowth = assetGrowthWithoutAppreciation + valueIncreaseFirstYear;
+        double annualReturn = loanCalcs.Equity > 0 ? (assetGrowth / loanCalcs.Equity * 100) : 0;
+        double annualReturnWithoutAppreciation = loanCalcs.Equity > 0 ? (assetGrowthWithoutAppreciation / loanCalcs.Equity * 100) : 0;
+
+        return new FinalYield
+        {
+            CountYear = year - DateTime.Now.Year,
+            AssetGrowth = assetGrowth,
+            AssetGrowthWithoutAppreciation = assetGrowthWithoutAppreciation,
+            AnnualReturn = annualReturn,
+            AnnualReturnWithoutAppreciation = annualReturnWithoutAppreciation
         };
     }
 }
@@ -97,4 +120,13 @@ public class Tax
     public double TaxableCashflow { get; set; }
     public double PersonalTaxRate { get; set; }
     public double TaxesToPay { get; set; }
+}
+
+public class FinalYield
+{
+    public int CountYear { get; set; } 
+    public double AssetGrowth { get; set; } // Vermögenszuwachs p.a. 
+    public double AssetGrowthWithoutAppreciation { get; set; } // ohne Wertsteigerung
+    public double AnnualReturn { get; set; } // Eigenkapitalrendite p.a.
+    public double AnnualReturnWithoutAppreciation { get; set; } // ohne Wertsteigerung
 }

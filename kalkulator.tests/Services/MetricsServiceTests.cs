@@ -51,6 +51,12 @@ public class MetricsServiceTests
             {
                 MaintenanceReservePerSquareMeterPerAnnum = 10,
                 CalculatedRentLossPercentage = 3,
+            },
+            Forecast = new AnnualForecast
+            {
+                RentIncreasePercentage = 3,
+                CostIncreasePercentage = 2,
+                ValueIncreasePercentage = 2
             }
         };
 
@@ -95,6 +101,25 @@ public class MetricsServiceTests
             result.Tax.PersonalTaxRate.Should().Be(41);
             result.Tax.TaxesToPay.Should().BeApproximately(-142, 1);
             result.NetCashflow.Should().BeApproximately(-226, 1);
+        }
+    }
+
+    [Fact]
+    public void GetFinalYield_ReturnsCorrectCalculations()
+    {
+        double personalTaxRate = 41; // Example tax rate
+
+        // Act
+        var result = _service.GetFinalYield(2024, personalTaxRate);
+
+        // Assert
+        using (new AssertionScope())
+        {
+            result.CountYear.Should().Be(0);
+            result.AssetGrowth.Should().BeApproximately(5616, 1);
+            result.AssetGrowthWithoutAppreciation.Should().BeApproximately(856, 1);
+            result.AnnualReturn.Should().BeApproximately(21.5, 0.5);
+            result.AnnualReturnWithoutAppreciation.Should().BeApproximately(3.3, 0.1);
         }
     }
 }
