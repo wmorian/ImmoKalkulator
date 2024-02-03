@@ -1,20 +1,40 @@
 using kalkulator.net.Model;
 using kalkulator.net.Services.Precalculation;
 
-namespace kalkulator.net.Services.Metrics;
+namespace kalkulator.net.Services.Metric;
 
-public class MetricsService(Calculation calculation, double livingSpace)
+public class MetricsService
 {
-    private readonly PrecalculationsService _precalculationsService = new(calculation, livingSpace);
+    // private readonly PrecalculationsService _precalculationsService;
+    private readonly Precalculations _precalculations;
+    private readonly Calculation _calculation;
+
+    public MetricsService(Calculation calculation, double livingSpace)
+    {
+        _calculation = calculation;
+        var precalculationsService = new PrecalculationsService(_calculation, livingSpace);
+        _precalculations = precalculationsService.GetPrecalculation();
+    }
+
+    public Metrics GetMetrics(double personalTaxRate, int year = 2024)
+    {
+        return new Metrics
+        {
+            RentalYield = GetRentalYield(),
+            Cashflow = GetCashflow(personalTaxRate),
+            FinalYield = GetFinalYield(year, personalTaxRate),
+            Precalculations = _precalculations
+        };
+    }
 
     public RentalYield GetRentalYield()
     {
-        var purchaseDetail = calculation.PurchaseDetail ?? throw new Exception($"{nameof(calculation.PurchaseDetail)} cannot be null!");
+        var purchaseDetail = _calculation.PurchaseDetail ?? throw new Exception($"{nameof(_calculation.PurchaseDetail)} cannot be null!");
 
-        var rentCalcs = _precalculationsService.GetRentCalcs();
-        var operatingCalcs = _precalculationsService.GetOperatingCostsCalcs();
-        var initialInvestmentCalcs = _precalculationsService.GetInitialInvestmentCalcs();
-        var purchaseDetailCalcs = _precalculationsService.GetPurchaseDetailCalcs();
+        var rentCalcs = _precalculations.RentCalcs ?? throw new Exception($"{nameof(_precalculations.RentCalcs)} cannot be null!");
+        var operatingCalcs = _precalculations.OperatingCostsCalcs ?? throw new Exception($"{nameof(_precalculations.OperatingCostsCalcs)} cannot be null!");
+        var initialInvestmentCalcs = _precalculations.InitialInvestmentCalcs ?? throw new Exception($"{nameof(_precalculations.InitialInvestmentCalcs)} cannot be null!");
+        var purchaseDetailCalcs = _precalculations.PurchaseDetailCalcs ?? throw new Exception($"{nameof(_precalculations.PurchaseDetailCalcs)} cannot be null!");
 
         double overallInvestment = purchaseDetail.PurchasePrice + purchaseDetailCalcs.SumCharges + initialInvestmentCalcs.SumOfCosts;
 
@@ -34,12 +54,12 @@ public class MetricsService(Calculation calculation, double livingSpace)
 
     public Cashflow GetCashflow(double personalTaxRate)
     {
-        var depreciation = calculation.Depreciation ?? throw new Exception($"{nameof(calculation.Depreciation)} cannot be null!");
+        var depreciation = _calculation.Depreciation ?? throw new Exception($"{nameof(_calculation.Depreciation)} cannot be null!");
 
-        var rentCalcs = _precalculationsService.GetRentCalcs();
-        var operatingCalcs = _precalculationsService.GetOperatingCostsCalcs();
-        var loanCalcs = _precalculationsService.GetLoanCalcs();
-        var depreciationCalcs = _precalculationsService.GetDepreciationCalcs();
+        var rentCalcs = _precalculations.RentCalcs ?? throw new Exception($"{nameof(_precalculations.RentCalcs)} cannot be null!");
+        var operatingCalcs = _precalculations.OperatingCostsCalcs ?? throw new Exception($"{nameof(_precalculations.OperatingCostsCalcs)} cannot be null!");
+        var loanCalcs = _precalculations.LoanCalcs ?? throw new Exception($"{nameof(_precalculations.LoanCalcs)} cannot be null!");
+        var depreciationCalcs = _precalculations.DepreciationCalcs ?? throw new Exception($"{nameof(_precalculations.DepreciationCalcs)} cannot be null!");
 
         double warmRent = rentCalcs.WarmRent;
         double operatingCosts = -operatingCalcs.SumOfOperationCosts;
@@ -72,10 +92,10 @@ public class MetricsService(Calculation calculation, double livingSpace)
 
     public FinalYield GetFinalYield(int year, double personalTaxRate)
     {
-        var forecast = calculation.Forecast ?? throw new Exception($"{nameof(calculation.Forecast)} cannot be null!");
-        var initialInvestmentCalcs = _precalculationsService.GetInitialInvestmentCalcs();
+        var forecast = _calculation.Forecast ?? throw new Exception($"{nameof(_calculation.Forecast)} cannot be null!");
+        var initialInvestmentCalcs = _precalculations.InitialInvestmentCalcs ?? throw new Exception($"{nameof(_precalculations.InitialInvestmentCalcs)} cannot be null!");
+        var loanCalcs = _precalculations.LoanCalcs ?? throw new Exception($"{nameof(_precalculations.LoanCalcs)} cannot be null!");
 
-        var loanCalcs = _precalculationsService.GetLoanCalcs();
         var casflow = GetCashflow(personalTaxRate);
         double valueIncreaseFirstYear = forecast.ValueIncreasePercentage / 100 * initialInvestmentCalcs.NewPropertyValue;
         double assetGrowthWithoutAppreciation = 12 * (-casflow.Repayment + casflow.NetCashflow);
@@ -92,41 +112,4 @@ public class MetricsService(Calculation calculation, double livingSpace)
             AnnualReturnWithoutAppreciation = annualReturnWithoutAppreciation
         };
     }
-}
-
-public class RentalYield
-{
-    public double ColdRentPerYear { get; set; } // Nettokaltmiete
-    public double GrossRentalYield { get; set; } // Bruttomietrendite
-    public double PriceToRentRatio { get; set; } // Kaufpreisfaktor
-    public double NetRentalYield { get; set; } // Nettomietrendite
-}
-
-public class Cashflow
-{
-    public double WarmRent { get; set; }
-    public double OperatingCosts { get; set; }
-    public double Interest { get; set; }
-    public double Repayment { get; set; }
-    public double OperatingCashflow { get; set; }
-    public Tax Tax { get; set; } = new();
-    public double NetCashflow { get; set; }
-}
-
-public class Tax
-{
-    public double OperatingCostWithoutReserves { get; set; }
-    public double DepreciationAfa { get; set; }
-    public double TaxableCashflow { get; set; }
-    public double PersonalTaxRate { get; set; }
-    public double TaxesToPay { get; set; }
-}
-
-public class FinalYield
-{
-    public int CountYear { get; set; } 
-    public double AssetGrowth { get; set; } // Vermögenszuwachs p.a. 
-    public double AssetGrowthWithoutAppreciation { get; set; } // ohne Wertsteigerung
-    public double AnnualReturn { get; set; } // Eigenkapitalrendite p.a.
-    public double AnnualReturnWithoutAppreciation { get; set; } // ohne Wertsteigerung
 }

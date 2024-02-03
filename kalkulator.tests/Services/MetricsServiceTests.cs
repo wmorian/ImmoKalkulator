@@ -1,7 +1,7 @@
 using FluentAssertions;
 using FluentAssertions.Execution;
 using kalkulator.net.Model;
-using kalkulator.net.Services.Metrics;
+using kalkulator.net.Services.Metric;
 
 namespace kalkulator.tests.Services;
 
