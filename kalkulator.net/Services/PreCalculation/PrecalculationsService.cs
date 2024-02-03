@@ -4,6 +4,20 @@ namespace kalkulator.net.Services.Precalculation;
 
 public class PrecalculationsService(Calculation calculation, double livingSpace)
 {
+    public Precalculations GetPrecalculation()
+    {
+        return new Precalculations
+        {
+            DepreciationCalcs = GetDepreciationCalcs(),
+            InitialInvestmentCalcs = GetInitialInvestmentCalcs(),
+            LoanCalcs = GetLoanCalcs(),
+            OperatingCostsCalcs = GetOperatingCostsCalcs(),
+            PurchaseDetailCalcs = GetPurchaseDetailCalcs(),
+            RentCalcs = GetRentCalcs(),
+            ReservesCalcs = GetReservesCalcs()
+        };
+    }
+
     // Abschreibung
     public DepreciationCalcs GetDepreciationCalcs()
     {
