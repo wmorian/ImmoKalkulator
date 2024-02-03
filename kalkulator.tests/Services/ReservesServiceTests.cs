@@ -1,24 +1,17 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using kalkulator.net.Model;
 using kalkulator.net.Services;
-using Xunit.Abstractions;
 
 namespace kalkulator.tests.Services;
 
 public class ReservesServiceTests
 {
-    private readonly ITestOutputHelper _output;
     private ReservesService _service;
 
-    public ReservesServiceTests(ITestOutputHelper output)
+    public ReservesServiceTests()
     {
         _service = new ReservesService();
-        _output = output;
     }
 
     [Fact]
