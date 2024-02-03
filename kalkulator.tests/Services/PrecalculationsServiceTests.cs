@@ -107,6 +107,8 @@ public class PrecalculationsServiceTests
         {
             result.SumOperationCostsAllocable.Should().Be(162); // HousingAllowanceAllocable + PropertyTax + Allocable OtherCosts
             result.SumOfOperationCostsNonAllocable.Should().BeApproximately(125, 0.1); // HousingAllowanceNonAllocable + MaintenanceReserve + RentLoss + NonAllocable OtherCosts
+            result.PersonalMaintenanceReserves.Should().BeApproximately(47, 1); // HousingAllowanceAllocable + HousingAllowanceNonAllocable
+            result.CalculatedRentLoss.Should().BeApproximately(30, 1); // HousingAllowanceAllocable + HousingAllowanceNonAllocable
             result.SumOfHousingAllowance.Should().Be(199); // HousingAllowanceAllocable + HousingAllowanceNonAllocable
             result.SumOfOperationCosts.Should().BeApproximately(287, 0.1); // SumOperationCostsAllocable + SumOfOperationCostsNonAllocable
         }
