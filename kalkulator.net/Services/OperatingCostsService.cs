@@ -5,7 +5,7 @@ namespace kalkulator.net.Services;
 // Bewirtschaftungskosten
 public class OperatingCostsService
 {
-    public OperatingCostsCalcs GetOperatingCostsCalcs(Calculation calculation)
+    public OperatingCostsCalcs GetOperatingCostsCalcs(Calculation calculation, double livingSpace)
     {
         var operatingCosts = calculation.OperatingCosts ?? throw new Exception($"{nameof(calculation.OperatingCosts)} cannot be null!");
         var rent = calculation.Rent ?? throw new Exception($"{nameof(calculation.Rent)} cannot be null!");
@@ -17,7 +17,7 @@ public class OperatingCostsService
         
         var warmRent = rent.TotalColdRent + rent.ParkingSpaces + rent.Other + sumOperationCostsAllocable;
         var sumOfOperationCostsNonAllocable = operatingCosts.HousingAllowanceNonAllocable 
-            + reserves.MaintenanceReservePerSquareMeterPerAnnum 
+            + (livingSpace * reserves.MaintenanceReservePerSquareMeterPerAnnum / 12)
             + (reserves.CalculatedRentLossPercentage / 100 * warmRent)
             + operatingCosts.OtherCosts.Where(c => !c.IsAllocable).Sum(c => c.Cost);
 

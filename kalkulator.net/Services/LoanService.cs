@@ -27,8 +27,8 @@ public class LoanService
         {
             SumOfLoans = sumOfLoans,
             Equity = equity,
-            WeightedInterestRate = weightedInterest,
-            WeightedRepaymentRate = weightedRepayment
+            WeightedInterestRate = weightedInterest * 100,
+            WeightedRepaymentRate = weightedRepayment * 100
         };
     }
 }
