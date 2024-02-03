@@ -1,5 +1,6 @@
 namespace kalkulator.net.Model;
 
+// Abschreibung
 public class Depreciation
 {
     public int Id { get; set; } // Primary key
