@@ -85,15 +85,19 @@ public class PrecalculationsService(Calculation calculation, double livingSpace)
             + operatingCosts.OtherCosts.Where(c => c.IsAllocable).Sum(c => c.Cost);
 
         var warmRent = rent.TotalColdRent + rent.ParkingSpaces + rent.Other + sumOperationCostsAllocable;
+        var personalMaintenanceReserves = livingSpace * reserves.MaintenanceReservePerSquareMeterPerAnnum / 12;
+        var calculatedRentLoss = reserves.CalculatedRentLossPercentage / 100 * warmRent;
         var sumOfOperationCostsNonAllocable = operatingCosts.HousingAllowanceNonAllocable
-            + (livingSpace * reserves.MaintenanceReservePerSquareMeterPerAnnum / 12)
-            + (reserves.CalculatedRentLossPercentage / 100 * warmRent)
+            + personalMaintenanceReserves
+            + calculatedRentLoss
             + operatingCosts.OtherCosts.Where(c => !c.IsAllocable).Sum(c => c.Cost);
 
         return new OperatingCostsCalcs
         {
             SumOperationCostsAllocable = sumOperationCostsAllocable,
             SumOfOperationCostsNonAllocable = sumOfOperationCostsNonAllocable,
+            PersonalMaintenanceReserves = personalMaintenanceReserves,
+            CalculatedRentLoss = calculatedRentLoss,
             SumOfHousingAllowance = operatingCosts.HousingAllowanceAllocable + operatingCosts.HousingAllowanceNonAllocable,
             SumOfOperationCosts = sumOperationCostsAllocable + sumOfOperationCostsNonAllocable
         };
