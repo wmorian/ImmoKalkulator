@@ -6,16 +6,19 @@ using FluentAssertions;
 using FluentAssertions.Execution;
 using kalkulator.net.Model;
 using kalkulator.net.Services;
+using Xunit.Abstractions;
 
 namespace kalkulator.tests.Services;
 
 public class ReservesServiceTests
 {
+    private readonly ITestOutputHelper _output;
     private ReservesService _service;
 
-    public ReservesServiceTests()
+    public ReservesServiceTests(ITestOutputHelper output)
     {
         _service = new ReservesService();
+        _output = output;
     }
 
     [Fact]
@@ -36,7 +39,7 @@ public class ReservesServiceTests
         // Assert
         using (new AssertionScope())
         {
-            result.RecommendedMaintanceReserves.Should().BeApproximately(47, 0.01);
+            result.RecommendedMaintanceReserves.Should().Be(47);
         }
     }
 

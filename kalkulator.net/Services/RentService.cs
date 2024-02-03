@@ -20,8 +20,8 @@ public class RentService
         
         return new RentCalcs
         {
-            ColdRent = coldRent,
-            WarmRent = coldRent + sumOperationCostsAllocable
+            ColdRent = Math.Round(coldRent),
+            WarmRent = Math.Round(coldRent + sumOperationCostsAllocable)
         };
     }
 }

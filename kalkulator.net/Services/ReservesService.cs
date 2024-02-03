@@ -18,11 +18,11 @@ public class ReservesService
 
         var result = (depreciation.BuildingValuePercentageOfPurchasePrice / 100
             * purchaseDetail.PurchasePrice
-            * (1 / 80 * 1.5) 
+            * (1.0 / 80.0 * 1.5) 
             - (12 * operatingCosts.HomeownersAssociationReserve))
             / livingSpace;
 
-        return new ReservesCalcs { RecommendedMaintanceReserves = result };
+        return new ReservesCalcs { RecommendedMaintanceReserves = Math.Round(result) };
     }
 }
 
