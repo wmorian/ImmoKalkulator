@@ -9,8 +9,20 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddControllers();
     
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin",
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+                   .AllowAnyHeader()
+                   .AllowAnyMethod();
+        });
+});
+
+builder.Services.AddControllers();
+
 // Register AutoMapper
 builder.Services.AddAutoMapper(typeof(Program).Assembly); // Adjust the assembly as necessary
 
@@ -23,7 +35,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// app.UseHttpsRedirection();
 
 // Ensure the database is created
 using (var scope = app.Services.CreateScope())
@@ -32,6 +43,9 @@ using (var scope = app.Services.CreateScope())
     dbContext.Database.EnsureCreated();
 }
 
+// Use the named CORS policy
+app.UseCors("AllowSpecificOrigin");
 app.MapControllers();
+// app.UseHttpsRedirection();
 
 app.Run();
