@@ -11,6 +11,7 @@ public class MappingProfile : Profile
     {
         // Create a map between your entities and DTOs
         CreateMap<Property, PropertyDto>().ReverseMap();
+        CreateMap<Property, PropertyDetailDto>().ReverseMap();
         CreateMap<Calculation, CalculationDto>().ReverseMap();
         CreateMap<Depreciation, DepreciationDto>().ReverseMap();
         CreateMap<AnnualForecast, AnnualForecastDto>().ReverseMap();

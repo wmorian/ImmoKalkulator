@@ -26,16 +26,19 @@ public class PropertyController(AppDbContext context, IMapper mapper) : Controll
 
     // GET: api/Property/5
     [HttpGet("{id}")]
-    public async Task<ActionResult<PropertyDto>> GetProperty(int id)
+    public async Task<ActionResult<PropertyDetailDto>> GetProperty(int id)
     {
-        var property = await _context.Properties.FindAsync(id);
+        var property = await _context.Properties
+            .Include(p => p.Calculations)
+            .ThenInclude(c => c.PurchaseDetail)
+            .FirstOrDefaultAsync(p => p.Id == id);
 
         if (property == null)
         {
             return NotFound();
         }
 
-        return _mapper.Map<PropertyDto>(property);
+        return _mapper.Map<PropertyDetailDto>(property);
     }
 
     // POST: api/Property
