@@ -7,6 +7,8 @@ public class OperatingCostsDto
     public double HousingAllowanceNonAllocable { get; set; } // "Hausgeld (nicht umlagefähiger Teil)"
     public double HomeownersAssociationReserve { get; set; } // "WEG Rücklage"
     public ICollection<OtherOperatingCost> OtherCosts { get; set; } = [];
+    public int Id { get; set; } // Primary key
+    public int CalculationId { get; set; } // Foreign key to Calculation
 }
 
 public class OtherOperatingCostDto

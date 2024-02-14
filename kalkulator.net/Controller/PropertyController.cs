@@ -62,8 +62,7 @@ public class PropertyController(AppDbContext context, IMapper mapper) : Controll
         }
 
         var property = _mapper.Map<Property>(propertyDto);
-        _context.Entry(property).State = EntityState.Modified;
-
+        _context.Update(property);
         try
         {
             await _context.SaveChangesAsync();

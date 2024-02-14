@@ -110,7 +110,7 @@ public class CalculationController(AppDbContext context, IMapper mapper) : Contr
         }
 
         var calculation = _mapper.Map<Calculation>(calculationDto);
-        _context.Entry(calculation).State = EntityState.Modified;
+        _context.Update(calculation);
 
         try
         {
